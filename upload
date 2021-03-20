@@ -5,7 +5,7 @@ TANGGAL=$(date +"%Y-%m-%d-%H:%M")
 
 #uploading 
 uploading() {
-        cd build
+        cd shiva 
 
 	echo -e "so finally time to upload kernel to tg \n"
 	ZIP=Zypher-Kernel_shiva-${TANGGAL}.zip
