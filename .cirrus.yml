@@ -1,0 +1,15 @@
+env: # Environt variable to pass to all tasks
+    CIRRUS_CLONE_DEPTH: 1 # No need to clone with whole history
+    CIRRUS_WORKING_DIR: "/tmp/ci" # Where to clone repo
+
+task:
+    name: Kernel build
+    timeout_in: 120m
+    container:
+      image: apon77/aosp:latest
+      cpu: 10
+      memory: 24G
+    build_script:
+      - bash build
+    upload_script:
+      - bash upload
