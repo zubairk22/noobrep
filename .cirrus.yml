@@ -9,6 +9,8 @@ task:
       image: apon77/aosp:latest
       cpu: 10
       memory: 24G
+    zram_script:
+      - bash zram
     build_script:
       - bash build
     upload_script:

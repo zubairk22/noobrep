@@ -1,0 +1,10 @@
+#!/bin/bash 
+
+sudo apt install zram-config
+cat /proc/swaps
+
+
+
+echo "" 
+echo "" 
+df -h
