@@ -1,72 +1,24 @@
 #!/bin/bash
+cd /tmp/rec
+rm -rf .repo
+source build/envsetup.sh
+lunch omni_shiva-eng
+export SKIP_API_CHECKS=true
+export SKIP_ABI_CHECKS=true
+export ALLOW_MISSING_DEPENDENCIES=true
+cd /tmp/rec
+export CCACHE_DIR=/tmp/ccache  ##use additional flags if you need(optional)
+export CCACHE_EXEC=$(which ccache)
+export USE_CCACHE=1
 
-DEVICE=shiva
-ZIP="AnyKernel/*.zip"
-TANGGAL=$(date +"%Y-%m-%d-%H:%M")
+ccache -M 30G
+ccache -o compression=true
+ccache -z
+ccache -c
 
-if [[ ! -n $2 ]]; then 
-    STATUS=ALPHA 
-else 
-    STATUS=$2 
-fi 
+mka recoveryimage
 
-# Setup
-echo "Setting up.."
-apt-get -y update && apt-get -y upgrade && apt-get install bc cpio build-essential zip curl libstdc++6 git wget python gcc clang libssl-dev repo rsync flex bison -y
-git config --global user.name "zubairk22oct"
-git config --global user.email "areeb9670@gmail.com"
-git config --global color.ui false
-
-echo "Cloning dependencies"
-git clone --depth=1 --single-branch https://github.com/Redmi-MT6768/android_kernel_xiaomi_mt6768 shiva
-
-cd shiva
-git clone --depth=1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-5484270 -b 9.0 clang
-git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc
-git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9 gcc32
-git clone https://github.com/HenloLab/AnyKernel3.git -b lancelot AnyKernel
-
-echo "Done"
-KERNEL_DIR=$(pwd)
-IMAGE="${KERNEL_DIR}/out/arch/arm64/boot/Image.gz-dtb"
-TANGGAL=$(date +"%Y%m%d-%H")
-BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-PATH="${KERNEL_DIR}/clang/bin:${KERNEL_DIR}/gcc/bin:${KERNEL_DIR}/gcc32/bin:${PATH}"
-export KBUILD_COMPILER_STRING="$(${KERNEL_DIR}/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')"
-export ARCH=arm64
-export KBUILD_BUILD_USER=zubair
-export KBUILD_BUILD_HOST=retrograde
-
-make O=out ARCH=arm64 shiva_defconfig
-
-# Compile plox
-compile() {
-    make -j8 O=out \
-                    ARCH=arm64 \
-                    CC=clang \
-                    CLANG_TRIPLE=aarch64-linux-gnu- \
-                    CROSS_COMPILE=aarch64-linux-android- \
-                    CROSS_COMPILE_ARM32=arm-linux-androideabi-
-}
-
-module() {
-[ -d "modules" ] && rm -rf modules || mkdir -p modules
-
-compile \
-INSTALL_MOD_PATH=../modules \
-INSTALL_MOD_STRIP=1 \
-modules_install
-}
-
-# Zipping
-zipping() {
-    cd AnyKernel || exit 1
-    cp ../out/arch/arm64/boot/Image.gz-dtb .
-    zip -r9 Zypher-Kernel_shiva-${TANGGAL}.zip *
-    cd ..
-}
-
-start
-compile
-module
-zipping
+curl --upload-file ./out/target/product/shiva/recovery.img http://transfer.sh/
+curl --upload-file ./out/target/product/shiva/SHRP_AddonRescue*zip https://transfer.sh/
+curl --upload-file ./out/target/product/shiva/SHRP_v3.1_*zip https://transfer.sh/
+echo "/nUploaded All files successfully!"
