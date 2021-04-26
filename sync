@@ -18,4 +18,4 @@ pwd
 ls
 
 ##delete these lines, and replace with your own lines of device sauce
-git clone https://github.com/zubairk22oct/omni_device_xiaomi_shiva -b shrp device/xiaomi/shiva
+git clone https://github.com/SHRP-Devices/device_xiaomi_shiva -b shrp device/xiaomi/shiva
