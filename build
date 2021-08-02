@@ -21,4 +21,4 @@ mka recoveryimage
 curl --upload-file ./out/target/product/shiva/recovery.img http://transfer.sh/
 curl --upload-file ./out/target/product/shiva/SHRP_AddonRescue*zip https://transfer.sh/
 curl --upload-file ./out/target/product/shiva/SHRP_v3.1_*zip https://transfer.sh/
-echo "/nUploaded All files successfully!"
+echo "/nUploaded All files successfully wohoo!"
